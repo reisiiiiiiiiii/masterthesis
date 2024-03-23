@@ -10,7 +10,7 @@ relativeDataPath = 'Master Thesis Data'
 # Setze den Datenordner-Pfad
 dataPath = os.path.join(baseDrivePath, relativeDataPath)
 
-csvDataPath = os.path.join(dataPath, 'csvData')
+csvDataPath = os.path.join(dataPath, 'weather_2015.csv')
 
 jsonPath = os.path.join(dataPath, 'json')
 
