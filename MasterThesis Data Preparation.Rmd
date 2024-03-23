@@ -1,0 +1,244 @@
+---
+title: "Master Thesis Data Preparation"
+author: "Leon Reiß"
+date: "2024-03-23"
+output: html_document
+---
+
+## Sources of Data
+
+The data was not collected by the author himself. We have a dataset for the spatio-temporal analysis, which comes from *https://citibikenyc.com/system-data* and a weather dataset from *https://github.com/leokassio/weather-underground-data/blob/master/new-york-2015.csv* (weather underground). both datasets refer to the years 2015 and 2016.
+
+```{r setup, include=FALSE}
+
+#Loading necessary packages
+library(tidyverse)
+library(dplyr)
+
+#Cleaning the environment
+rm(list = ls())
+
+```
+
+## Spatio-temporal Dataset CitiBike Trip Data
+
+```{r Loading and merging the folders pfor spatio-temporal data}
+#Creating a main path to the data folders
+main_path_2016 <- '/Users/leonreiss/Desktop/2016-citibike-tripdata'
+
+#Create list of folders for every month
+folders <- list.files(main_path_2016, full.names = TRUE)
+
+#Read data from all montly folders and merge them
+all_data <- folders %>%
+  map(~list.files(.x, full.names = TRUE, pattern = "\\.csv$")) %>% 
+  map_df(~read_csv(.x))
+
+#write result in csv
+write_csv(all_data, file.path(main_path_2016, 'all_data'))
+str(all_data)
+
+##Note: There are empty columns with the same name as filled columns, only written in capital letters. It has to be checked, wether these column contain any values.
+
+#List of columns to be checked
+columns_to_check <- c("Trip Duration", "Start Time", "Stop Time", "Start Station ID", 
+                        "Start Station Name", "Start Station Latitude", "Start Station Longitude", 
+                        "End Station ID", "End Station Name", "End Station Latitude", 
+                        "End Station Longitude", "Bike ID", "User Type", "Birth Year", "Gender")
+
+# Check if they contain only empty values
+for (column_name in columns_to_check) {
+  na_count <- sum(is.na(all_data[[column_name]]))
+  message(column_name, " hat ", na_count, " leere Werte (NA).")
+}
+
+# List of columns to check for presence of values
+columns_to_check <- c("Trip Duration", "Start Time", "Stop Time", "Start Station ID", 
+                      "Start Station Name", "Start Station Latitude", "Start Station Longitude", 
+                      "End Station ID", "End Station Name", "End Station Latitude", 
+                      "End Station Longitude", "Bike ID", "User Type", "Birth Year", "Gender")
+
+
+```
+
+## Results of columns_to_check
+Trip Duration has 10262649 empty values (NA).
+Start Time has 10262649 empty values (NA).
+Stop Time has 10262649 empty values (NA).
+Start Station ID has 10262649 empty values (NA).
+Start Station Name has 10262649 empty values (NA).
+Start Station Latitude has 10262649 empty values (NA).
+Start Station Longitude has 10262649 empty values (NA). 
+End Station ID has 10262649 empty values (NA).
+End Station Name has 10262649 empty values (NA).
+End Station Latitude has 10262649 empty values (NA).
+End Station Longitude has 10262649 empty values (NA).
+Bike ID has 10262649 empty values (NA).
+User Type has 10298520 empty values (NA).
+Birth Year has 10566167 empty values (NA).
+Gender has 10262649 empty values (NA).
+
+
+``` {r Further investigation for missing values}
+
+# Initialize a vector to store dates from "Start Time" where data is present
+dates_with_data <- c()
+
+# Loop through the specified columns
+for (column in columns_to_check) {
+  # Check if there are any non-NA (non-empty) values in the column
+  if (any(!is.na(all_data[[column]]))) {
+    # If the column is "Start Time", extract and store the dates
+    if (column == "Start Time") {
+      # Attempt to convert "Start Time" to Date format (adjust format as needed)
+      start_dates <- as.Date(all_data[["Start Time"]], format = "%m/%d/%Y %H:%M:%S")
+      
+      # Remove NA values from conversion attempt
+      valid_dates <- na.omit(start_dates)
+      
+      # Add unique dates to the list
+      dates_with_data <- unique(c(dates_with_data, valid_dates))
+    }
+  }
+}
+
+# Print the dates where data is present
+print(dates_with_data)
+
+# Convert into right format
+dates_with_data_readable <- as.Date(dates_with_data, origin = "1970-01-01")
+
+#Print of result
+print(dates_with_data_readable)
+
+
+##Note: it seems that the data starting from the 1st of october until the end of the year is saved in the columns using capital letters. A visual investigation of the corresponding tables confirms this assumption.
+
+
+```
+
+## Loading and merging all data starting from october to end of the year
+
+``` {r Loading and merging from october 16 to december 16}
+
+# Set the path to the directory containing the CSV files
+exception_path <- "/Users/leonreiss/Desktop/Exceptions for 2016" # Ersetze dies durch deinen tatsächlichen Pfad
+
+# List all CSV files in the directory
+folders_exceptions <- list.files(exception_path, full.names = TRUE)
+
+#Read data from all montly folders and merge them
+exception_2016 <- folders_exceptions %>%
+  map(~list.files(.x, full.names = TRUE, pattern = "\\.csv$")) %>% 
+  map_df(~read_csv(.x))
+
+
+str(exception_2016)
+str(all_data)
+
+# first definition of scheme
+renaming_schema <- list(
+  "Trip Duration" = "tripduration",
+  "Start Time" = "starttime",
+  "Stop Time" = "stoptime",
+  "Start Station ID" = "start station id",
+  "Start Station Name" = "start station name",
+  "Start Station Latitude" = "start station latitude",
+  "Start Station Longitude" = "start station longitude",
+  "End Station ID" = "end station id",
+  "End Station Name" = "end station name",
+  "End Station Latitude" = "end station latitude",
+  "End Station Longitude" = "end station longitude",
+  "Bike ID" = "bikeid",
+  "User Type" = "usertype",
+  "Birth Year" = "birth year",
+  "Gender" = "gender"
+)
+
+# usage of scheme to convert table columns
+
+for (old_name in names(renaming_schema)) {
+  new_name <- renaming_schema[[old_name]]
+  
+  # check if old column exists
+  if (old_name %in% names(exception_2016)) {
+    #copy of data from old name to new column
+   exception_2016[[new_name]] <- exception_2016[[old_name]]
+    
+    if (old_name == "Start Time" || old_name == "Stop Time") {
+      exception_2016[[new_name]] <- as.character(exception_2016[[new_name]])
+    }
+    
+    # removing the old column
+   exception_2016[[old_name]] <- NULL
+  }
+}
+
+# check
+str(exception_2016)
+all_data
+
+```
+
+''Merging together the data from all_data and exception_2016 (october bis december 2016)
+``` {r Merging of 2016}
+
+# Merge exception_2016 with all_data
+combined_data <- bind_rows(all_data, exception_2016)
+
+# check
+head(combined_data)
+
+#Note: everything is working now
+```
+
+
+## Now loading the data for 2015
+
+``` {r loading and merging the 2015 dataset}
+
+main_path_2015 <- '/Users/leonreiss/Desktop/2015-citibike-tripdata'
+
+# List of folders for 2015
+folders_2015 <- list.files(main_path_2015, full.names = TRUE)
+
+# Alle CSV-Dateien aus allen Monatsordnern für 2016 lesen und zu all_data hinzufügen
+all_data_2015 <- folders_2015 %>%
+  map(~list.files(.x, full.names = TRUE, pattern = "\\.csv$")) %>% 
+  map_df(~read_csv(.x))
+
+RawBikeData <- bind_rows(all_data_2015, combined_data)
+head(RawBikeData, 200)
+
+# Speichere den Dataframe 'RawBikeData' als CSV-Datei
+write.csv(RawBikeData, "RawBikeData.csv", row.names = FALSE)
+write.csv(all_data_2015, "RawBikeData_2015.csv", row.names = FALSE)
+
+#########Note: Final dataset for spatio-temporal Analysis is RawBikeData
+# Saving of Dataframe 'RawBikeData' as CSV-file
+write.csv(RawBikeData, "/Users/leonreiss/Desktop/RawBikeData.csv", row.names = FALSE)
+```
+
+
+## Weather Dataset 
+
+```{r import and merge weather data, echo=FALSE}
+# Set the path to the directory containing the weather CSV files
+path_to_weather_data <- "/Users/leonreiss/Desktop/DATA THESIS/Weather"
+
+# Construct the full paths to the individual CSV files
+weather_data_2015_path <- file.path(path_to_weather_data, "new-york-2015.csv")
+weather_data_2016_path <- file.path(path_to_weather_data, "new-york-2016.csv")
+
+# Load the data from the CSV files
+weather_data_2015 <- read.csv(weather_data_2015_path, stringsAsFactors = FALSE)
+weather_data_2016 <- read.csv(weather_data_2016_path, stringsAsFactors = FALSE)
+
+# Merge the weather data for 2015 and 2016, ensuring that 2015 is before 2016
+csv_weather <- rbind(weather_data_2015, weather_data_2016)
+
+# Check the result of the merge
+head(weather_data_combined)
+
+```
+
