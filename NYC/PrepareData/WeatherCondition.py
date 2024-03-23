@@ -15,7 +15,7 @@ temperature = {}
 temperatureHour = {}
 wind = {}
 windHour = {}
-with open(os.path.join(csvDataPath, '1135040.csv'), 'r') as f:
+with open(os.path.join(csvDataPath, 'weather_2015.csv'), 'r') as f:
     f_csv = csv.reader(f)
     headers = next(f_csv)
     counter = 0
@@ -27,41 +27,42 @@ with open(os.path.join(csvDataPath, '1135040.csv'), 'r') as f:
         date = parse(currentDate)
         dateString = date.strftime(dateTimeMode)
         hour = date.hour
-        # 天气情况
+        # Weather condition
         if dateString not in isBadDay:
             isBadDay[dateString] = 0
-        weatherCondition = row[9]
+        weatherCondition = row[-2]  # Changed from row[9] to row[-2]
         if weatherCondition != '':
             isBadDay[dateString] = 1
-        # 气温
+        # Temperature
         if dateString not in temperature:
             temperature[dateString] = []
             temperatureHour[dateString] = [NO_TEM for e in range(24)]
-        if row[15] != '':
+        if row[2] != '':  # Changed from row[15] to row[2]
             try:
-                temperature[dateString].append(float(row[15].replace('s', '')))
-                temperatureHour[dateString][hour] = float(row[15].replace('s', ''))
+                temp_val = float(row[2].replace('s', ''))
+                temperature[dateString].append(temp_val)
+                temperatureHour[dateString] = [temp_val for e in range(24)]  # Set hourly values to daily value
             except:
-                print('Tem', row[15])
-        #  风速
+                print('Tem', row[2])
+        # Wind speed
         if dateString not in wind:
             wind[dateString] = []
             windHour[dateString] = [0 for e in range(24)]
-        if row[17] != '':
+        if row[17] != '':  # Wind is the same column
             try:
-                wind[dateString].append(float(row[17].replace('s', '')))
-                windHour[dateString][hour] = float(row[17].replace('s', ''))
+                wind_val = float(row[17].replace('s', ''))
+                wind[dateString].append(wind_val)
+                windHour[dateString] = [wind_val for e in range(24)]  # Set hourly values to daily value
             except:
                 print('Wind', row[17])
 
 for key, value in temperature.items():
-    temperature[key] = NO_TEM if temperature[key].__len__() == 0 else np.mean(value)
+    temperature[key] = NO_TEM if len(value) == 0 else np.mean(value)
 for key, value in wind.items():
-    wind[key] = NO_TEM if wind[key].__len__() == 0 else np.mean(value)
+    wind[key] = NO_TEM if len(value) == 0 else np.mean(value)
 
 weatherDict = {'isBadDay': isBadDay, 'temperature': temperature, 'wind': wind, 'temHour': temperatureHour,
                'windHour': windHour}
 
 with open(os.path.join(jsonPath, 'weatherDict.json'), 'w') as f:
     json.dump(weatherDict, f)
-
