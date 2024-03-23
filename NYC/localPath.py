@@ -5,7 +5,7 @@ projectPath = os.path.dirname(os.path.abspath(__file__))
 baseDrivePath = '/content/drive/MyDrive'
 
 # Definiere den relativen Pfad von deinem Google Drive Basispfad zu deinem Datenordner
-relativeDataPath = 'Master Thesis Data/DataDir/NYC'
+relativeDataPath = 'Master Thesis Data'
 
 # Setze den Datenordner-Pfad
 dataPath = os.path.join(baseDrivePath, relativeDataPath)
@@ -18,7 +18,7 @@ demandDataPath = os.path.join(dataPath, 'demandData')
 
 pngPath = os.path.join(dataPath, 'png')
 
-rawBikeDataPath = os.path.join(dataPath, 'RawBikeData')
+rawBikeDataPath = os.path.join(dataPath, 'RawBikeData_2015.csv')
 
 demandMinDataPath = os.path.join(dataPath, 'demandMinData')
 
