@@ -3,7 +3,7 @@ import os
 import csv
 import json
 from dateutil.parser import parse
-from DataAPI.utils import saveJsonData, getJsonData
+from dataAPI.utils import saveJsonData, getJsonData
 from APIS.multi_threads import multipleProcess
 
 csvFileNameList = [e for e in os.listdir(rawBikeDataPath) if e.endswith(".csv")]
