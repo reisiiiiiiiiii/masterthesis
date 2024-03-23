@@ -2,7 +2,13 @@ import os
 
 projectPath = os.path.dirname(os.path.abspath(__file__))
 
-dataPath = os.path.join(os.path.join(os.path.dirname(projectPath), 'DataDir'), 'NYC')
+baseDrivePath = '/content/drive/MyDrive'
+
+# Definiere den relativen Pfad von deinem Google Drive Basispfad zu deinem Datenordner
+relativeDataPath = 'Master Thesis Data/DataDir/NYC'
+
+# Setze den Datenordner-Pfad
+dataPath = os.path.join(baseDrivePath, relativeDataPath)
 
 csvDataPath = os.path.join(dataPath, 'csvData')
 
