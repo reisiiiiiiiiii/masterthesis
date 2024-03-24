@@ -5,7 +5,7 @@ import statsmodels.api as sm
 import pandas as pd
 import matplotlib.pyplot as plt
 import math
-from DataAPI.utils import *
+from dataAPI.utils import *
 
 
 dailyDemandDict = safeLoad(getJsonData, 'dailyDemandDict.json')

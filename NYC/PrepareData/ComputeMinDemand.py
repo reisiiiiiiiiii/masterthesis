@@ -4,9 +4,9 @@ import os
 import csv
 import json
 from dateutil.parser import parse
-from DataAPI.utils import getJsonData, saveJsonDataToPath
+from dataAPI.utils import getJsonData, saveJsonDataToPath
 from APIS.multi_threads import multipleProcess
-from DataAPI.apis import getRawBikeDataFileList
+from dataAPI.apis import getRawBikeDataFileList
 dateTimeMode = '%Y-%m-%d'
 
 
