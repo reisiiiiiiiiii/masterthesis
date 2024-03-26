@@ -34,7 +34,7 @@ if __name__ == '__main__':
     stationIdList = stationIdOrderByBuildTime['stationID']
     
     n_jobs = 11
-    timeRangeTransitionMatrix = ['2016-01-01', '2017-01-01']
+    timeRangeTransitionMatrix = ['2015-01-01', '2015-12-31']
     # timeRangeTransitionMatrix = trainDataTimeRange
 
     p = Pool()
