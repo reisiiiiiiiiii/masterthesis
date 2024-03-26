@@ -2,6 +2,7 @@ import os
 
 def copyFileFromTo(fileStart, target, destList):
     currentPath = os.path.dirname(os.path.abspath(__file__))
+    print(currentPath)
     allFileList = [e for e in os.listdir(currentPath) if e.startswith(fileStart) and e.endswith('.py')]
     allFileName = [e[:-3] for e in allFileList]
 
@@ -31,7 +32,7 @@ def copyFileFromTo(fileStart, target, destList):
                 with open(os.path.join(currentPath, targetFile), 'w', encoding='utf-8') as f:
                     f.writelines(sourceFileContent)
     print('Succeed')
-
+    print("Dateien im Verzeichnis:", os.listdir(currentPath))
 def generateFile(fileNameString, target, destList):
     currentPath = os.path.dirname(os.path.abspath(__file__))
     sourceFile = fileNameString % target
