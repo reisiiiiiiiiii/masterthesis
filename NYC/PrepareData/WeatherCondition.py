@@ -26,7 +26,8 @@ with open(os.path.join(csvDataPath, 'weather_2015.csv'), 'r') as f:
     for row in f_csv:
         print(counter)
         counter += 1
-        currentDate = row[5]
+        currentDate = row[0]
+        print(currentDate)
         parsedDate = getDateFromTimeString(currentDate)
         if not parsedDate:  # Wenn das Datum ungültig ist, überspringe diesen Durchlauf
             continue
