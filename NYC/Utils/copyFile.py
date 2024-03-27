@@ -3,7 +3,9 @@ import os
 def copyFileFromTo(fileStart, target, destList):
     currentPath = os.path.dirname(os.path.abspath(__file__))
     print(currentPath)
-    allFileList = [e for e in os.listdir(currentPath) if e.startswith(fileStart) and e.endswith('.py')]
+    path_to_files = os.path.join(currentPath, '/GraphFusionModel')  # Hier den Pfad anpassen
+    print(path_to_files)
+    allFileList = [e for e in os.listdir(path_to_files) if e.startswith(fileStart) and e.endswith('.py')]
     allFileName = [e[:-3] for e in allFileList]
 
     rankRange = destList
@@ -11,7 +13,7 @@ def copyFileFromTo(fileStart, target, destList):
 
     sourceFile = ''
     targetFileList = []
-    for i in range(allFileName.__len__()):
+    for i in range(len(allFileName)):
         fileName = allFileName[i].split('_')
         rank = int(fileName[-1])
         if rank == sourceRank:
@@ -23,9 +25,9 @@ def copyFileFromTo(fileStart, target, destList):
     if sourceFile == '':
         print('Can not find source file')
     else:
-        with open(os.path.join(currentPath, sourceFile), 'r', encoding='utf-8') as f:
+        with open(os.path.join(path_to_files, sourceFile), 'r', encoding='utf-8') as f:
             sourceFileContent = f.readlines()
-        if targetFileList.__len__() == 0:
+        if len(targetFileList) == 0:
             print('No target file')
         else:
             for targetFile in targetFileList:
@@ -33,26 +35,7 @@ def copyFileFromTo(fileStart, target, destList):
                     f.writelines(sourceFileContent)
     print('Succeed')
     print("Dateien im Verzeichnis:", os.listdir(currentPath))
-def generateFile(fileNameString, target, destList):
-    currentPath = os.path.dirname(os.path.abspath(__file__))
-    sourceFile = fileNameString % target
-    targetFileList = []
-    for fileCounter in range(destList[0], destList[1] + 1):
-        targetFileList.append(fileNameString % fileCounter)
 
-    # get source file content
-    if sourceFile == '':
-        print('Can not find source file')
-    else:
-        with open(os.path.join(currentPath, sourceFile), 'r', encoding='utf-8') as f:
-            sourceFileContent = f.readlines()
-        if targetFileList.__len__() == 0:
-            print('No target file')
-        else:
-            for targetFile in targetFileList:
-                with open(os.path.join(currentPath, targetFile), 'w', encoding='utf-8') as f:
-                    f.writelines(sourceFileContent)
-    print('Succeed')
 
 if __name__ == '__main__':
     # copyFileFromTo('GraphSingleStationDemandPre', 0, [1, 9])
