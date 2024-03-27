@@ -71,7 +71,7 @@ if __name__ == '__main__':
     # demand correlation graph
     if not os.path.isfile(os.path.join(txtPath, 'demandListForGraph.txt')):
         demandList = []
-        timeRange = ['2016-01-01', '2017-01-01']
+        timeRange = ['2015-01-01', '2015-12-31']
         timeSlot = 60
         for stationIndex in range(len(allStationIDList)):
             date = parse(timeRange[0])
