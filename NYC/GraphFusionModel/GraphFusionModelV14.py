@@ -1,5 +1,6 @@
-from DataAPI.utils import *
-import tensorflow as tf
+from dataAPI.utils import *
+import tensorflow.compat.v1 as tf
+tf.disable_v2_behavior()
 from scipy import stats
 import sys
 
