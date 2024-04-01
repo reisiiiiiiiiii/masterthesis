@@ -31,8 +31,8 @@ n_steps_encoder = featureLength
 n_steps_decoder = 3
 decoderOutputSize = 1
 
-timeRange = ['2013-07-01', '2017-09-30']
-trainDataTimeRange = ['2013-07-01', '2016-09-30']
+timeRange = ['2015-01-01', '2015-12-31']
+trainDataTimeRange = ['2015-01-01', '2015-08-31']
 # valDataTimeRange = ['2016-10-01', '2016-12-31']
 # testDataRange = ['2017-01-01', '2017-09-30']
 
@@ -47,8 +47,8 @@ trainDataTimeRange = ['2013-07-01', '2016-09-30']
 # print(dayCounter)
 
 # trainDataLength = 186 # 22 60
-valDataLength = 40
-testDataLength = 80
+valDataLength = 61
+testDataLength = 61
 
 demandTypeList = ['in', 'out', 'sum']
 demandType = demandTypeList[0]
